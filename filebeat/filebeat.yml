@@ -1,0 +1,13 @@
+filebeat.inputs:
+# Log file di sistema
+- type: filestream
+  id: system-files
+  enabled: true
+  paths:
+    - /var/log/dpkg.log
+    - /var/log/nginx/access.log
+  recursive_glob: true
+
+output.logstash:
+  hosts: ["logstash:5044"]
+

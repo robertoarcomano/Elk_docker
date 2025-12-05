@@ -48,6 +48,34 @@ services:
     networks:
       - elk-net
 
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:9.2.2
+    container_name: filebeat
+    user: root  # Necessario per leggere /var/log
+    volumes:
+      - /var/log:/var/log:ro      # Monta log host
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro  # Log Docker
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    environment:
+      - ELASTICSEARCH_HOSTS=elasticsearch:9200
+    depends_on:
+      - elasticsearch
+      - logstash
+    networks:
+      - elk-net
+
+  # journalbeat:
+  #   image: docker.elastic.co/beats/journalbeat:9.2.2
+  #   user: root
+  #   volumes:
+  #     - /var/log/journal:/var/log/journal:ro
+  #     - /run/log/journal:/run/log/journal:ro
+  #     - ./journalbeat/journalbeat.yml:/usr/share/journalbeat/journalbeat.yml:ro
+  #   depends_on:
+  #     - logstash
+  #   networks:
+  #     - elk-net
+
 volumes:
   esdata:
     driver: local
